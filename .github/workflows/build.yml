@@ -64,6 +64,21 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install Android SDK platform 36
+        run: sdkmanager "platforms;android-36"
+
+      - name: Decode signing keystore
+        if: ${{ secrets.UPLOAD_KEYSTORE_BASE64 != '' }}
+        run: echo "${{ secrets.UPLOAD_KEYSTORE_BASE64 }}" | base64 -d > android/upload-keystore.jks
+
+      - name: Create key.properties
+        if: ${{ secrets.UPLOAD_KEYSTORE_BASE64 != '' }}
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=upload" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
+
       - name: Install dependencies
         run: flutter pub get
 

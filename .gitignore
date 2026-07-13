@@ -48,5 +48,10 @@ migrate_working_dir/
 .firebase/
 firebase-debug.log
 
+# Android signing secrets (NEVER commit these)
+upload-keystore.jks
+**/android/key.properties
+keystore_base64.txt
+
 # Exceptions
 !**/selectors/*.

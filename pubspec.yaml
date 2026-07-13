@@ -44,7 +44,6 @@ dependencies:
 
   # Image Processing
   image_picker: ^1.1.2
-  tflite_flutter: ^0.10.0
 
   # Local Storage
   hive: ^2.2.3
