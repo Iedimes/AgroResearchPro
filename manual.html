@@ -316,6 +316,8 @@ flutter test</pre>
         <li><code class="inline">android-apk</code>: <code class="inline">app-release.apk</code> firmado para descarga directa desde tu servidor (sin Google Play).</li>
       </ul>
       <p style="margin-top:10px"><strong>Distribución</strong>: subí <code class="inline">build/web</code> a tu hosting y el APK a una ruta de descarga.
+      Dentro de <code class="inline">build/web</code> se incluye <code class="inline">descargas.html</code>, una página de descargas que enlaza la web,
+      el APK (colocá <code class="inline">app-release.apk</code> en esa misma carpeta) y las instrucciones de iOS.
       El APK se firma con la clave de debug del template (válido para instalación directa; para Play Store necesitarías un keystore propio). iOS requiere Mac + cuenta Apple Developer.</p>
     </div>
   </section>

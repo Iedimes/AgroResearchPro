@@ -182,6 +182,8 @@ Pasos del job `android`: JDK 17 + Android SDK + `flutter build apk --release`,
 y sube el APK.
 
 **Distribución:** subí `build/web` a tu hosting y el APK a una ruta de descarga.
+Dentro de `build/web` va incluida `descargas.html`, una página de descargas que enlaza
+la web, el APK (colocá `app-release.apk` en esa misma carpeta) y las instrucciones de iOS.
 Para Play Store usarías `flutter build appbundle --release` con un keystore propio.
 iOS requiere Mac + cuenta Apple Developer.
 
