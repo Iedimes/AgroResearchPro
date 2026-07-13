@@ -1,0 +1,52 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Flutter / Dart / Pub
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+**/web/fonts/
+**/web/icons/
+**/web/manifest.json
+
+# Android
+**/android/.gradle/
+**/android/**/debug.keystore
+**/android/**/release.keystore
+**/android/captures/
+**/android/local.properties
+
+# iOS / macOS
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/ephemeral/
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/macos/Flutter/GeneratedPluginRegistrant.*
+**/macos/Flutter/Embedder/
+
+# Firebase local artifacts (not the committed config)
+.firebase/
+firebase-debug.log
+
+# Exceptions
+!**/selectors/*.

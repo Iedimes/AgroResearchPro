@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "654498817903",
+    "project_id": "agroresearch-pro",
+    "storage_bucket": "agroresearch-pro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654498817903:android:f9997af0548fe66e94aa9a",
+        "android_client_info": {
+          "package_name": "com.example.agro_research_pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6MV2YHnGy3B-p9Uqe0AA7-aTM5Lm-iYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
