@@ -8,6 +8,8 @@ de laboratorio, tanto desde el teléfono como desde la web.
 
 > Enfoque exclusivo en I+D agronómica: **no** incluye ventas, carrito ni precios.
 
+📖 **Manual de usuario (presentación web):** abrí [`manual.html`](manual.html) en el navegador.
+
 ---
 
 ## Índice
