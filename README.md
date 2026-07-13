@@ -171,9 +171,19 @@ Usá el selector de ensayo para filtrar los gráficos.
 
 ### GitHub Actions
 El repo incluye `.github/workflows/build.yml`, que ante cada `push`/`pull_request`
-sobre `main` hace: `flutter pub get` → `flutter analyze` (informativo) →
-`flutter test` → `flutter build web --release` y sube `build/web` como artefacto
-`web-release`.
+sobre `main` genera dos artefactos:
+- **`web-release`**: `build/web` para hospedar en cualquier servidor.
+- **`android-apk`**: `app-release.apk` (firmado con la clave de debug del template)
+  listo para descarga directa desde tu servidor, sin Google Play.
+
+Pasos del job `web`: `flutter pub get` → `flutter analyze` (informativo) →
+`flutter test` → `flutter build web --release`.
+Pasos del job `android`: JDK 17 + Android SDK + `flutter build apk --release`,
+y sube el APK.
+
+**Distribución:** subí `build/web` a tu hosting y el APK a una ruta de descarga.
+Para Play Store usarías `flutter build appbundle --release` con un keystore propio.
+iOS requiere Mac + cuenta Apple Developer.
 
 ### Estructura
 ```
