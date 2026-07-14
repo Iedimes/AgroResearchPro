@@ -88,8 +88,9 @@ jobs:
           KEYSTORE_PW: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 -d > android/upload-keystore.jks
-            printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=upload\nstoreFile=upload-keystore.jks\n' "$KEYSTORE_PW" > android/key.properties
+            echo "$KEYSTORE_B64" | tr -d '[:space:]' | base64 -d > android/upload-keystore.jks
+            PW=$(echo "$KEYSTORE_PW" | tr -d '[:space:]')
+            printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=upload\nstoreFile=upload-keystore.jks\n' "$PW" "$PW" > android/key.properties
           fi
 
       - name: Install dependencies
