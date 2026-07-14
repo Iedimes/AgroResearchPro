@@ -5,6 +5,7 @@ import 'package:agro_research_pro/core/constants/crops.dart';
 import 'package:agro_research_pro/core/utils/app_utils.dart';
 import 'package:agro_research_pro/models/lab_result.dart';
 import 'package:agro_research_pro/services/repository/providers.dart';
+import 'package:agro_research_pro/services/sync/sync_notifier.dart';
 
 class LabResultFormScreen extends ConsumerStatefulWidget {
   const LabResultFormScreen({super.key, this.result});
@@ -95,17 +96,24 @@ class _LabResultFormScreenState extends ConsumerState<LabResultFormScreen> {
           );
     try {
       await repo.put(entity);
+      await ref.read(syncProvider.notifier).syncAll();
+      final syncResult = ref.read(syncProvider).lastResult;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Resultado guardado')),
+          SnackBar(
+            content: Text(
+              syncResult.isEmpty ? 'Resultado guardado y sincronizado' : syncResult,
+            ),
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al guardar: $e')),
+          SnackBar(content: Text('Guardado localmente. Error de sincronización: $e')),
         );
+        Navigator.pop(context);
       }
     }
   }

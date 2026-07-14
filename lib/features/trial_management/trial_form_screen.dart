@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:agro_research_pro/core/constants/crops.dart';
 import 'package:agro_research_pro/models/trial.dart';
 import 'package:agro_research_pro/services/repository/providers.dart';
+import 'package:agro_research_pro/services/sync/sync_notifier.dart';
 
 class TrialFormScreen extends ConsumerStatefulWidget {
   const TrialFormScreen({super.key, this.trial});
@@ -125,17 +126,24 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
           );
     try {
       await repo.put(entity);
+      await ref.read(syncProvider.notifier).syncAll();
+      final syncResult = ref.read(syncProvider).lastResult;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ensayo guardado')),
+          SnackBar(
+            content: Text(
+              syncResult.isEmpty ? 'Ensayo guardado y sincronizado' : syncResult,
+            ),
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al guardar: $e')),
+          SnackBar(content: Text('Guardado localmente. Error de sincronización: $e')),
         );
+        Navigator.pop(context);
       }
     }
   }

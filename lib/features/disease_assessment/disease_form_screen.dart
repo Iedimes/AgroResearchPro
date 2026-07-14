@@ -5,6 +5,7 @@ import 'package:agro_research_pro/core/utils/app_utils.dart';
 import 'package:agro_research_pro/models/disease_assessment.dart';
 import 'package:agro_research_pro/models/trial.dart';
 import 'package:agro_research_pro/services/repository/providers.dart';
+import 'package:agro_research_pro/services/sync/sync_notifier.dart';
 import 'package:agro_research_pro/widgets/trial_picker.dart';
 
 class DiseaseFormScreen extends ConsumerStatefulWidget {
@@ -95,17 +96,24 @@ class _DiseaseFormScreenState extends ConsumerState<DiseaseFormScreen> {
           );
     try {
       await repo.put(entity);
+      await ref.read(syncProvider.notifier).syncAll();
+      final syncResult = ref.read(syncProvider).lastResult;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Evaluación guardada')),
+          SnackBar(
+            content: Text(
+              syncResult.isEmpty ? 'Evaluación guardada y sincronizada' : syncResult,
+            ),
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al guardar: $e')),
+          SnackBar(content: Text('Guardado localmente. Error de sincronización: $e')),
         );
+        Navigator.pop(context);
       }
     }
   }
