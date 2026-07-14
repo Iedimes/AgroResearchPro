@@ -71,20 +71,6 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
   Future<void> _useMyLocation() async {
     setState(() => _loadingLocation = true);
     try {
-      var perm = await Geolocator.checkPermission();
-      if (perm == LocationPermission.denied) {
-        perm = await Geolocator.requestPermission();
-      }
-      if (perm == LocationPermission.deniedForever) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Ubicación denegada. Habilítela en la configuración del navegador.'),
-            ),
-          );
-        }
-        return;
-      }
       final pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 15),
@@ -92,9 +78,19 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
       _latCtrl.text = pos.latitude.toStringAsFixed(6);
       _lngCtrl.text = pos.longitude.toStringAsFixed(6);
     } catch (e) {
+      String msg;
+      if (e.toString().contains('denied') || e.toString().contains('permission')) {
+        msg = 'Permiso denegado. Actívelo en Ajustes > Ubicación y recargue la página.';
+      } else if (e.toString().contains('unavailable')) {
+        msg = 'GPS no disponible. Active la ubicación en el teléfono.';
+      } else if (e.toString().contains('timeout')) {
+        msg = 'Tiempo de espera agotado. Intente en un lugar abierto.';
+      } else {
+        msg = 'Error de ubicación: $e';
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No se pudo obtener la ubicación: $e')),
+          SnackBar(content: Text(msg)),
         );
       }
     } finally {
