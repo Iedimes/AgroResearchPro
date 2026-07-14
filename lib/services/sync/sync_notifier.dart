@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:agro_research_pro/models/base_entity.dart';
@@ -66,20 +68,24 @@ class SyncNotifier extends StateNotifier<SyncState> {
     if (state.syncing) return;
     state = state.copyWith(syncing: true, lastResult: '');
     try {
-      // 1) Subir lo local pendiente
-      await _syncRepo(ref.read(trialRepoProvider), sync);
-      await _syncRepo(ref.read(diseaseRepoProvider), sync);
-      await _syncRepo(ref.read(applicationRepoProvider), sync);
-      await _syncRepo(ref.read(maintenanceRepoProvider), sync);
-      await _syncRepo(ref.read(labRepoProvider), sync);
+      await Future.sync(() async {
+        // 1) Subir lo local pendiente
+        await _syncRepo(ref.read(trialRepoProvider), sync);
+        await _syncRepo(ref.read(diseaseRepoProvider), sync);
+        await _syncRepo(ref.read(applicationRepoProvider), sync);
+        await _syncRepo(ref.read(maintenanceRepoProvider), sync);
+        await _syncRepo(ref.read(labRepoProvider), sync);
 
-      // 2) Bajar de la nube y mezclar (recupera lo local y lo alinea con la nube)
-      await _pullRepo(ref.read(trialRepoProvider), 'trials', sync);
-      await _pullRepo(ref.read(diseaseRepoProvider), 'diseases', sync);
-      await _pullRepo(ref.read(applicationRepoProvider), 'applications', sync);
-      await _pullRepo(ref.read(maintenanceRepoProvider), 'maintenance', sync);
-      await _pullRepo(ref.read(labRepoProvider), 'lab_results', sync);
-
+        // 2) Bajar de la nube y mezclar (recupera lo local y lo alinea con la nube)
+        await _pullRepo(ref.read(trialRepoProvider), 'trials', sync);
+        await _pullRepo(ref.read(diseaseRepoProvider), 'diseases', sync);
+        await _pullRepo(ref.read(applicationRepoProvider), 'applications', sync);
+        await _pullRepo(ref.read(maintenanceRepoProvider), 'maintenance', sync);
+        await _pullRepo(ref.read(labRepoProvider), 'lab_results', sync);
+      }).timeout(
+        const Duration(seconds: 20),
+        onTimeout: () => throw TimeoutException('La nube no respondió (20 s)'),
+      );
       state = state.copyWith(
         syncing: false,
         lastResult: 'Sincronizado: local y nube alineados',

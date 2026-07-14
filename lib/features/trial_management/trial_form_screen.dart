@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -126,24 +128,39 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
           );
     try {
       await repo.put(entity);
-      await ref.read(syncProvider.notifier).syncAll();
-      final syncResult = ref.read(syncProvider).lastResult;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              syncResult.isEmpty ? 'Ensayo guardado y sincronizado' : syncResult,
-            ),
-          ),
+          const SnackBar(content: Text('Guardado')),
         );
         Navigator.pop(context);
       }
+      unawaited(
+        ref
+            .read(syncProvider.notifier)
+            .syncAll()
+            .then((_) {
+              final r = ref.read(syncProvider).lastResult;
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(r.isEmpty ? 'Sincronizado con la nube' : r),
+                  ),
+                );
+              }
+            })
+            .catchError((e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('No se pudo sincronizar: $e')),
+                );
+              }
+            }),
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Guardado localmente. Error de sincronización: $e')),
+          SnackBar(content: Text('Error al guardar: $e')),
         );
-        Navigator.pop(context);
       }
     }
   }
