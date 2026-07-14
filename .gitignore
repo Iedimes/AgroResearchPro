@@ -27,8 +27,6 @@ migrate_working_dir/
 .pub/
 /build/
 **/web/fonts/
-**/web/icons/
-**/web/manifest.json
 
 # Android
 **/android/.gradle/
