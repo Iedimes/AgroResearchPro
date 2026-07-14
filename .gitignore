@@ -56,3 +56,6 @@ web/app-release.apk
 
 # Exceptions
 !**/selectors/*.
+
+# Android build reports
+android/build/reports/
