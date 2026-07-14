@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -71,6 +72,32 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
   Future<void> _useMyLocation() async {
     setState(() => _loadingLocation = true);
     try {
+      if (!kIsWeb) {
+        var perm = await Geolocator.checkPermission();
+        if (perm == LocationPermission.denied) {
+          perm = await Geolocator.requestPermission();
+        }
+        if (perm == LocationPermission.deniedForever) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Permiso de ubicación denegado permanentemente. Actívelo en Ajustes > Ubicación.'),
+              ),
+            );
+          }
+          return;
+        }
+        if (perm == LocationPermission.denied) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Permiso de ubicación rechazado. Otorgue el permiso e intente de nuevo.'),
+              ),
+            );
+          }
+          return;
+        }
+      }
       final pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 15),
@@ -80,7 +107,7 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
     } catch (e) {
       String msg;
       if (e.toString().contains('denied') || e.toString().contains('permission')) {
-        msg = 'Permiso denegado. Actívelo en Ajustes > Ubicación y recargue la página.';
+        msg = 'Permiso denegado. Actívelo en Ajustes > Ubicación.';
       } else if (e.toString().contains('unavailable')) {
         msg = 'GPS no disponible. Active la ubicación en el teléfono.';
       } else if (e.toString().contains('timeout')) {
