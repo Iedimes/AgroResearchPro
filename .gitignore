@@ -25,7 +25,9 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+# Ignore build outputs except the compiled web site (served as static files in production)
+/build/*
+!/build/web/
 **/web/fonts/
 **/web/icons/
 **/web/manifest.json
@@ -52,6 +54,9 @@ firebase-debug.log
 upload-keystore.jks
 **/android/key.properties
 keystore_base64.txt
+
+# Prebuilt APK served from the web download page (committed so clones can build/serve it)
+# web/app-release.apk
 
 # Exceptions
 !**/selectors/*.
