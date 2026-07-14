@@ -98,6 +98,7 @@ class _DiseaseFormScreenState extends ConsumerState<DiseaseFormScreen> {
           );
     try {
       await repo.put(entity);
+      ref.invalidate(diseasesProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Guardado')),

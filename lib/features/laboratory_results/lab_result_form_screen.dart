@@ -98,6 +98,7 @@ class _LabResultFormScreenState extends ConsumerState<LabResultFormScreen> {
           );
     try {
       await repo.put(entity);
+      ref.invalidate(labResultsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Guardado')),

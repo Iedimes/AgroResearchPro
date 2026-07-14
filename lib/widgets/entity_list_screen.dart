@@ -42,6 +42,7 @@ class EntityListScreen<T> extends ConsumerWidget {
     );
     if (confirmed == true) {
       await onDelete(item);
+      ref.invalidate(itemsProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registro eliminado')),

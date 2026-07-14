@@ -128,6 +128,7 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
           );
     try {
       await repo.put(entity);
+      ref.invalidate(trialsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Guardado')),

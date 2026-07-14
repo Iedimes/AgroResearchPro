@@ -104,6 +104,7 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
           );
     try {
       await repo.put(entity);
+      ref.invalidate(maintenanceProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Guardado')),

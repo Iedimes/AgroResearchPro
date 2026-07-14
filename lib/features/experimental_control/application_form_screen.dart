@@ -112,6 +112,7 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
           );
     try {
       await repo.put(entity);
+      ref.invalidate(applicationsProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Guardado')),
