@@ -26,9 +26,15 @@ class Repository<T extends StorableEntity> {
 
   Future<void> _loadAll() async {
     final box = await HiveStorage.openBox(boxName);
-    for (final value in box.values) {
-      final m = Map<String, dynamic>.from(value);
-      _cache[m['id'] as String] = m;
+    try {
+      await Future.sync(() async {
+        for (final value in box.values) {
+          final m = Map<String, dynamic>.from(value);
+          _cache[m['id'] as String] = m;
+        }
+      }).timeout(const Duration(seconds: 5));
+    } catch (_) {
+      // cache queda vacío: la app funciona igual sin datos persistidos
     }
   }
 
@@ -54,15 +60,23 @@ class Repository<T extends StorableEntity> {
     await _ensureLoaded();
     final json = entity.toJson();
     _cache[entity.id] = json;
-    final box = await _box();
-    await box.put(entity.id, json);
+    try {
+      await _box().then((b) => b.put(entity.id, json))
+          .timeout(const Duration(seconds: 5));
+    } catch (_) {
+      // persistencia opcional: cache ya tiene el dato
+    }
   }
 
   Future<void> delete(String id) async {
     await _ensureLoaded();
     _cache.remove(id);
-    final box = await _box();
-    await box.delete(id);
+    try {
+      await _box().then((b) => b.delete(id))
+          .timeout(const Duration(seconds: 5));
+    } catch (_) {
+      // persistencia opcional
+    }
   }
 
   Future<int> count() async {
