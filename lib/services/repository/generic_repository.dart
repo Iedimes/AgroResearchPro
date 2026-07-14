@@ -26,8 +26,9 @@ class Repository<T extends StorableEntity> {
 
   Future<void> _loadAll() async {
     final box = await HiveStorage.openBox(boxName);
-    for (final entry in box.toMap().entries) {
-      _cache[entry.key] = Map<String, dynamic>.from(entry.value);
+    for (final value in box.values) {
+      final m = Map<String, dynamic>.from(value);
+      _cache[m['id'] as String] = m;
     }
   }
 
