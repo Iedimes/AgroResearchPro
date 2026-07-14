@@ -93,15 +93,6 @@ jobs:
             printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=upload\nstoreFile=upload-keystore.jks\n' "$PW" "$PW" > android/key.properties
           fi
 
-      - name: Verify keystore (debug)
-        env:
-          KEYSTORE_B64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
-          KEYSTORE_PW: ${{ secrets.KEYSTORE_PASSWORD }}
-        run: |
-          echo "$KEYSTORE_B64" | tr -d '[:space:]' | base64 -d > /tmp/check.jks
-          echo "Decoded keystore size: $(wc -c < /tmp/check.jks) bytes"
-          keytool -list -keystore /tmp/check.jks -storepass "$KEYSTORE_PW" 2>&1 || true
-
       - name: Install dependencies
         run: flutter pub get
 
