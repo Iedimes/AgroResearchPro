@@ -99,12 +99,20 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
             operator: _operatorCtrl.text.isEmpty ? null : _operatorCtrl.text,
             notes: _notesCtrl.text.isEmpty ? null : _notesCtrl.text,
           );
-    await repo.put(entity);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registro guardado')),
-      );
-      Navigator.pop(context);
+    try {
+      await repo.put(entity);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registro guardado')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al guardar: $e')),
+        );
+      }
     }
   }
 

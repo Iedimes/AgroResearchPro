@@ -93,12 +93,20 @@ class _DiseaseFormScreenState extends ConsumerState<DiseaseFormScreen> {
             plot: _plotCtrl.text.isEmpty ? null : _plotCtrl.text,
             notes: _notesCtrl.text.isEmpty ? null : _notesCtrl.text,
           );
-    await repo.put(entity);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Evaluación guardada')),
-      );
-      Navigator.pop(context);
+    try {
+      await repo.put(entity);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Evaluación guardada')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al guardar: $e')),
+        );
+      }
     }
   }
 

@@ -123,12 +123,20 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
             observations:
                 _observationsCtrl.text.isEmpty ? null : _observationsCtrl.text,
           );
-    await repo.put(entity);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ensayo guardado')),
-      );
-      Navigator.pop(context);
+    try {
+      await repo.put(entity);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ensayo guardado')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al guardar: $e')),
+        );
+      }
     }
   }
 
