@@ -157,6 +157,31 @@ class _ApplicationFormScreenState extends ConsumerState<ApplicationFormScreen> {
         title: Text(widget.application == null
             ? 'Nueva Aplicación'
             : 'Editar Aplicación'),
+        actions: widget.application != null
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    final ok = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Eliminar'),
+                        content: const Text('¿Confirma que desea eliminar esta aplicación?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+                          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Eliminar')),
+                        ],
+                      ),
+                    );
+                    if (ok == true) {
+                      ref.read(applicationRepoProvider).delete(widget.application!.id);
+                      ref.invalidate(applicationsProvider);
+                      if (context.mounted) Navigator.pop(context);
+                    }
+                  },
+                ),
+              ]
+            : null,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

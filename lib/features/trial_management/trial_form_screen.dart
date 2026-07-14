@@ -71,8 +71,23 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
   Future<void> _useMyLocation() async {
     setState(() => _loadingLocation = true);
     try {
+      var perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) {
+        perm = await Geolocator.requestPermission();
+      }
+      if (perm == LocationPermission.deniedForever) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Ubicación denegada. Habilítela en la configuración del navegador.'),
+            ),
+          );
+        }
+        return;
+      }
       final pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 15),
       );
       _latCtrl.text = pos.latitude.toStringAsFixed(6);
       _lngCtrl.text = pos.longitude.toStringAsFixed(6);
@@ -171,6 +186,31 @@ class _TrialFormScreenState extends ConsumerState<TrialFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.trial == null ? 'Nuevo Ensayo' : 'Editar Ensayo'),
+        actions: widget.trial != null
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    final ok = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Eliminar'),
+                        content: const Text('¿Confirma que desea eliminar este ensayo?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+                          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Eliminar')),
+                        ],
+                      ),
+                    );
+                    if (ok == true) {
+                      ref.read(trialRepoProvider).delete(widget.trial!.id);
+                      ref.invalidate(trialsProvider);
+                      if (context.mounted) Navigator.pop(context);
+                    }
+                  },
+                ),
+              ]
+            : null,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

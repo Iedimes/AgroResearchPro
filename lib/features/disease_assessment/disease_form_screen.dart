@@ -143,6 +143,31 @@ class _DiseaseFormScreenState extends ConsumerState<DiseaseFormScreen> {
         title: Text(widget.assessment == null
             ? 'Nueva Evaluación'
             : 'Editar Evaluación'),
+        actions: widget.assessment != null
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    final ok = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Eliminar'),
+                        content: const Text('¿Confirma que desea eliminar esta evaluación?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+                          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Eliminar')),
+                        ],
+                      ),
+                    );
+                    if (ok == true) {
+                      ref.read(diseaseRepoProvider).delete(widget.assessment!.id);
+                      ref.invalidate(diseasesProvider);
+                      if (context.mounted) Navigator.pop(context);
+                    }
+                  },
+                ),
+              ]
+            : null,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

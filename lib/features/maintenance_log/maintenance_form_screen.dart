@@ -147,6 +147,31 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.log == null ? 'Nuevo Registro' : 'Editar Registro'),
+        actions: widget.log != null
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    final ok = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Eliminar'),
+                        content: const Text('¿Confirma que desea eliminar este registro?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+                          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Eliminar')),
+                        ],
+                      ),
+                    );
+                    if (ok == true) {
+                      ref.read(maintenanceRepoProvider).delete(widget.log!.id);
+                      ref.invalidate(maintenanceProvider);
+                      if (context.mounted) Navigator.pop(context);
+                    }
+                  },
+                ),
+              ]
+            : null,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

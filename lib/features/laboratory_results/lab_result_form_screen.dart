@@ -141,6 +141,31 @@ class _LabResultFormScreenState extends ConsumerState<LabResultFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.result == null ? 'Nuevo Resultado' : 'Editar Resultado'),
+        actions: widget.result != null
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    final ok = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Eliminar'),
+                        content: const Text('¿Confirma que desea eliminar este resultado?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+                          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Eliminar')),
+                        ],
+                      ),
+                    );
+                    if (ok == true) {
+                      ref.read(labRepoProvider).delete(widget.result!.id);
+                      ref.invalidate(labResultsProvider);
+                      if (context.mounted) Navigator.pop(context);
+                    }
+                  },
+                ),
+              ]
+            : null,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
